@@ -1,1 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 10th Mensiv!</title>
+    <style>
+        /* RESET & GENERAL SETUP */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        
+        /* SCREEN 1: MATRIX & COUNTDOWN */
+        #screen-1 { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 10; background: #000; }
+        #matrixCanvas { position: absolute; top: 0; left: 0; z-index: -1; }
+        #countdownText { font-size: 5rem; font-weight: bold; color: #ff69b4; text-shadow: 0 0 10px #ff69b4; z-index: 1; transition: opacity 0.5s; }
+        #openingText { font-size: 3rem; font-weight: bold; color: #ffb6c1; text-align: center; display: none; text-shadow: 0 0 15px #ffb6c1; animation: fadeInOut 4s ease-in-out forwards; }
+        
+        /* SCREEN 2: ENVELOPE & LETTER */
+        #screen-2 { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: none; justify-content: center; align-items: center; background: #1a0b14; z-index: 20; }
+        .envelope-wrapper { position: relative; width: 300px; height: 200px; cursor: pointer; transition: transform 0.3s; }
+        .envelope-wrapper:hover { transform: scale(1.05); }
+        .envelope { width: 100%; height: 100%; background: #c84b71; position: absolute; border-radius: 5px 5px 0 0; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .flap { position: absolute; top: 0; left: 0; border-left: 150px solid transparent; border-right: 150px solid transparent; border-top: 100px solid #a33555; z-index: 3; transition: transform 0.5s, z-index 0.1s; transform-origin: top; }
+        .letter { position: absolute; bottom: 0; left: 5%; width: 90%; height: 90%; background: #fff; z-index: 2; transition: transform 0.8s ease; padding: 20px; border-radius: 5px; color: #333; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+        .letter p { font-size: 0.95rem; line-height: 1.5; font-style: italic; }
+        .envelope-front { position: absolute; bottom: 0; left: 0; border-left: 150px solid #d85c82; border-right: 150px solid #d85c82; border-bottom: 100px solid #e86d93; z-index: 4; width: 100%; height: 100%; }
+        
+        /* Open Envelope Animation Classes */
+        .flap.open { transform: rotateX(180deg); z-index: 1; }
+        .letter.open { transform: translateY(-150px); z-index: 5; }
+        .next-btn { margin-top: 15px; padding: 8px 20px; background: #c84b71; color: white; border: none; border-radius: 20px; cursor: pointer; opacity: 0; transition: opacity 1s; font-weight: bold; }
+        .letter.open .next-btn { opacity: 1; transition-delay: 0.5s; }
+
+        /* SCREEN 3: HEART PHOTOS */
+        #screen-3 { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: none; background: #0a0508; z-index: 30; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
+        #heart-container { position: relative; width: 350px; height: 350px; margin-bottom: 30px; }
+        .heart-img { position: absolute; width: 50px; height: 50px; object-fit: cover; border: 3px solid #fff; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); opacity: 0; transform: scale(0); transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .heart-img.show { opacity: 1; }
+        #closingText { font-size: 1.5rem; color: #ffb6c1; font-style: italic; opacity: 0; transition: opacity 2s; text-align: center; padding: 0 20px; }
+
+        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 20% { opacity: 1; transform: scale(1); } 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.1); } }
+    </style>
+</head>
+<body>
+
+    <div id="screen-1">
+        <canvas id="matrixCanvas"></canvas>
+        <div id="countdownText">3</div>
+        <div id="openingText">Happy 10 Months, My Love.</div>
+    </div>
+
+    <div id="screen-2">
+        <div class="envelope-wrapper" onclick="openEnvelope()">
+            <div class="envelope"></div>
+            <div class="flap" id="flap"></div>
+            <div class="letter" id="letter">
+                <p>"Happy 10th Mensiv, sayanggkuu.<br><br>Every single day with you feels like a dream I never want to wake up from. No matter the distance or time, you are always the closest person to my heart. Thank you for being my everything."</p>
+                <button class="next-btn" onclick="goToScreen3(event)">See My Heart &rarr;</button>
+            </div>
+            <div class="envelope-front"></div>
+        </div>
+    </div>
+
+    <div id="screen-3">
+        <div id="heart-container"></div>
+        <div id="closingText">My home, my heart, my everything.</div>
+    </div>
+
+    <script>
+        // --- 1. MATRIX RAIN EFFECT ---
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const chars = '01'.split('');
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ff69b4'; // Pink matrix
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        const matrixInterval = setInterval(drawMatrix, 50);
+
+        // --- 2. COUNTDOWN & SCREEN TRANSITION ---
+        let count = 3;
+        const countdownEl = document.getElementById('countdownText');
+        const openingEl = document.getElementById('openingText');
+        const screen1 = document.getElementById('screen-1');
+        const screen2 = document.getElementById('screen-2');
+
+        const countInterval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                countdownEl.innerText = count;
+            } else if (count === 0) {
+                countdownEl.style.display = 'none';
+                openingEl.style.display = 'block';
+            } else if (count === -4) { // Wait 4 seconds for text animation
+                clearInterval(countInterval);
+                clearInterval(matrixInterval);
+                screen1.style.display = 'none';
+                screen2.style.display = 'flex';
+            }
+        }, 1000);
+
+        // --- 3. ENVELOPE INTERACTION ---
+        function openEnvelope() {
+            document.getElementById('flap').classList.add('open');
+            setTimeout(() => {
+                document.getElementById('letter').classList.add('open');
+            }, 300); // Wait for flap to open before raising letter
+        }
+
+        // --- 4. HEART PHOTO COLLAGE (SCREEN 3) ---
+        function goToScreen3(event) {
+            event.stopPropagation(); // Prevent triggering envelope click again
+            screen2.style.display = 'none';
+            const screen3 = document.getElementById('screen-3');
+            screen3.style.display = 'flex';
+            
+            createHeartCollage();
+        }
+
+        function createHeartCollage() {
+            const container = document.getElementById('heart-container');
+            
+            // --- GANTI NAMA FILE FOTO DI SINI ---
+            // Pastikan kamu punya 20 foto. Taruh foto satu folder dengan index.html
+            // Atau buat folder 'images' dan tulis 'images/foto1.jpg' dst.
+            const fotoPacar = [
+                "foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg", "foto5.jpg",
+                "foto6.jpg", "foto7.jpg", "foto8.jpg", "foto9.jpg", "foto10.jpg",
+                "foto11.jpg", "foto12.jpg", "foto13.jpg", "foto14.jpg", "foto15.jpg",
+                "foto16.jpg", "foto17.jpg", "foto18.jpg", "foto19.jpg", "foto20.jpg"
+            ];
+
+            fotoPacar.forEach((src, index) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'heart-img';
+                
+                // Fallback gambar jika foto belum diganti (hapus baris ini kalau foto sudah ada)
+                img.onerror = () => { img.src = `https://via.placeholder.com/100/ffb6c1/ffffff?text=Pic+${index+1}` };
+
+                // Rumus Matematika Kurva Hati untuk menyusun posisi
+                const t = (index / 20) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+
+                // Konversi titik koordinat ke persentase layar
+                const left = 50 + (x * 2.8); 
+                const top = 50 + (y * 2.8) - 10; 
+
+                img.style.left = `calc(${left}% - 25px)`; // 25px adalah setengah dari lebar gambar (50px)
+                img.style.top = `calc(${top}% - 25px)`;
+                
+                // Rotasi acak ala polaroid berserakan
+                const randomRot = (Math.random() - 0.5) * 40;
+
+                container.appendChild(img);
+
+                // Animasi pop-up satu per satu
+                setTimeout(() => {
+                    img.classList.add('show');
+                    img.style.transform = `scale(1) rotate(${randomRot}deg)`;
+                }, 100 * index); 
+            });
+
+            // Tampilkan teks penutup setelah semua foto selesai beranimasi
+            setTimeout(() => {
+                document.getElementById('closingText').style.opacity = '1';
+            }, 100 * 20 + 500);
+        }
+    </script>
+</body>
+</html>
 
