@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You, My Everything</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    
     <style>
+        /* CSS Variables */
         :root {
-            --bg-color: #1a0b12; /* Dark plum / maroon gelap */
-            --text-primary: #fdf5f6; /* Soft pinkish white */
-            --text-secondary: #d4a5b4; /* Muted pink */
-            --accent: #e57373;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.08);
+            --bg-dark: #12000a;
+            --bg-mid: #240010;
+            --bg-light: #3b0019;
+            --text-main: #fdf5f6;
+            --accent-pink: #f48fb1;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
+        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -22,302 +26,580 @@
         }
 
         body {
-            background: radial-gradient(circle at top, #3a1c2e 0%, var(--bg-color) 100%);
-            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid), var(--bg-light));
+            background-attachment: fixed;
+            color: var(--text-main);
             font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
             overflow-x: hidden;
+            min-height: 100vh;
+            scroll-behavior: smooth;
         }
 
+        /* Background Effects */
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle, transparent 40%, #050002 120%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        canvas#petals {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Typography */
         h1, h2, h3, .serif {
             font-family: 'Playfair Display', serif;
             font-weight: 400;
         }
+        
+        .pink-text {
+            color: var(--accent-pink);
+            text-shadow: 0 0 10px rgba(244, 143, 177, 0.3);
+        }
 
-        /* --- INTRO SCREEN (KADO) --- */
-        #intro-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color);
+        .subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: #d4a5b4;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        /* Layout Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 100;
-            transition: opacity 1s ease-out;
-        }
-
-        .gift-box {
-            font-size: 5rem;
-            cursor: pointer;
-            animation: bounce 2s infinite;
-            transition: transform 0.3s;
-        }
-
-        .gift-box:hover {
-            transform: scale(1.1);
-        }
-
-        .tap-text {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
-        }
-
-        /* --- MAIN CONTENT --- */
-        #main-content {
-            display: none; /* Disembunyikan sampai kado diklik */
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            opacity: 0;
-            animation: fadeIn 2s forwards;
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        /* Section Spacing */
-        section {
-            margin-bottom: 80px;
             text-align: center;
+            margin-bottom: 50px;
         }
 
-        .section-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            line-height: 1.2;
             margin-bottom: 20px;
         }
 
-        /* Music Player Placeholder */
+        /* Floating Music Player */
         .music-player {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 15px;
-            padding: 15px;
+            position: fixed;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .player-info {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
         }
 
-        .music-cover {
-            width: 60px;
-            height: 60px;
-            background: #333;
-            border-radius: 8px;
+        .player-cover {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: url('https://picsum.photos/seed/cover/100/100') center/cover;
+            animation: spin 10s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .player-cover.playing {
+            animation-play-state: running;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .player-text h4 { font-size: 0.9rem; margin-bottom: 3px; }
+        .player-text p { font-size: 0.75rem; color: #d4a5b4; }
+
+        .player-controls {
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
-            color: #888;
+            align-items: center;
+            gap: 20px;
         }
 
-        .music-info {
-            text-align: left;
+        .btn-play, .btn-nav {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s, color 0.2s;
         }
 
-        .music-info p { margin: 0; font-size: 0.9rem; }
-        .music-info span { font-size: 0.7rem; color: var(--text-secondary); }
+        .btn-play { font-size: 2rem; color: var(--accent-pink); }
+        .btn-play:hover, .btn-nav:hover { transform: scale(1.1); }
 
-        /* Text Content */
-        .paragraph {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.8;
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-pink);
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+
+        /* Gallery Section (Pinterest Style) */
+        .gallery-container {
+            margin-bottom: 100px;
+            column-count: 4;
+            column-gap: 20px;
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 20px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover {
+            box-shadow: 0 0 20px rgba(244, 143, 177, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Fullscreen Modal */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(10, 0, 5, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal.active img {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 30px; right: 40px;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            background: none; border: none;
+        }
+
+        /* Love Message Section */
+        .love-message {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 100px auto;
+            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+        }
+
+        .love-message h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
             margin-bottom: 20px;
         }
 
-        /* Grid Reasons */
-        .reasons-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+        .love-message p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ebd1d9;
         }
 
-        .reason-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 20px;
-            border-radius: 15px;
+        /* Floating Heart */
+        .floating-heart {
             text-align: center;
-            backdrop-filter: blur(5px);
+            font-size: 4rem;
+            margin: 50px 0;
+            animation: float 3s ease-in-out infinite, pulseGlow 2s infinite;
         }
 
-        .reason-icon {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
-        .reason-title {
+        @keyframes pulseGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(244, 143, 177, 0.5); transform: scale(1); }
+            50% { text-shadow: 0 0 40px rgba(244, 143, 177, 0.8); transform: scale(1.1); }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0 80px 0;
+        }
+
+        .closing-text {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            margin-bottom: 8px;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: var(--accent-pink);
         }
 
-        .reason-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
+        /* Scroll Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        /* Gallery Grid (Tempat Foto) */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+        /* Responsive */
+        @media (max-width: 992px) {
+            .gallery-container { column-count: 3; }
+            .music-player { left: 20px; width: 250px; }
         }
 
-        .photo-placeholder {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Nanti class ini dipakai kalau img sudah ada di VS Code */
-        .photo-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0; left: 0;
-            display: none; /* Hapus ini nanti di VS Code kalau gambar sudah dimasukkan */
-        }
-
-        .footer {
-            margin-top: 100px;
-            padding-bottom: 40px;
+        @media (max-width: 768px) {
+            .gallery-container { column-count: 2; column-gap: 15px; }
+            .gallery-item { margin-bottom: 15px; border-radius: 16px; }
+            
+            /* Music Player becomes fixed bottom on mobile */
+            .music-player {
+                top: auto;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 15px;
+            }
+            .player-controls { gap: 15px; }
+            .progress-bar { display: none; /* Hide progress bar on mobile to save space */ }
+            .love-message { padding: 30px 20px; margin: 0 20px 80px 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="intro-screen">
-        <div class="gift-box" onclick="openGift()">🎁</div>
-        <p class="tap-text">Tap to open</p>
+    <div class="vignette"></div>
+    <canvas id="petals"></canvas>
+
+    <div class="music-player">
+        <div class="player-info">
+            <div class="player-cover" id="cover"></div>
+            <div class="player-text">
+                <h4 id="song-title">Beautiful In White</h4>
+                <p id="song-artist">Westlife</p>
+            </div>
+        </div>
+        <div style="flex-grow: 1; width: 100%;">
+            <div class="progress-bar" id="progress-container">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+        </div>
+        <div class="player-controls">
+            <button class="btn-nav" onclick="prevSong()">⏮</button>
+            <button class="btn-play" id="play-btn" onclick="togglePlay()">▶</button>
+            <button class="btn-nav" onclick="nextSong()">⏭</button>
+        </div>
+        <audio id="audio" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-guitar-background-music-111531.mp3"></audio>
     </div>
 
-    <div id="main-content">
+    <main class="container">
         
-        <div class="music-player">
-            <div class="music-cover">Cover</div>
-            <div class="music-info">
-                <p>Sampai Jadi Debu</p>
-                <span>Banda Neira</span>
-                </div>
+        <section class="hero reveal">
+            <p class="subtitle">captured in time</p>
+            <h1>Your Beautiful <span class="pink-text">Pictures</span></h1>
+        </section>
+
+        <section class="gallery-container">
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love1/400/600" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love2/400/500" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love3/400/700" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love4/400/450" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love5/400/650" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love6/400/550" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love7/400/600" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love8/400/400" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love9/400/750" alt="Memory"></div>
+            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love10/400/500" alt="Memory"></div>
+        </section>
+
+        <section class="love-message reveal">
+            <p class="subtitle">always & forever</p>
+            <h2>You Are Loved <span class="pink-text">Beyond Words</span></h2>
+            <p>
+                In a world full of ordinary moments, you are the extraordinary one. The way you laugh, the way you care, the way you simply exist — it fills every corner of my world with something I never knew I needed. No matter where life takes us, know that somewhere in the universe, there is a garden blooming with every feeling I have ever held for you.
+            </p>
+        </section>
+
+        <div class="floating-heart reveal">
+            💗
         </div>
 
-        <section>
-            <p class="section-subtitle">a love letter in bloom</p>
-            <h1 class="section-title">For You,<br>My Everything</h1>
-            <p class="paragraph">Every petal holds a whisper of how much you mean to me.</p>
-        </section>
+        <footer class="reveal">
+            <p class="closing-text">made with love, just for you 🌸</p>
+        </footer>
 
-        <section>
-            <p class="section-subtitle">🌸 from my heart 🌸</p>
-            <h2 class="section-title" style="font-size: 2rem;">You are my<br>wildest dream<br>come true.</h2>
-            <p class="paragraph">In a world full of ordinary moments, you are the extraordinary one. The way you laugh, the way you care, the way you simply exist — it fills every corner of my world with something I never knew I needed.</p>
-            <p class="serif" style="margin-top: 20px; font-style: italic;">~ Always yours ~</p>
-        </section>
+    </main>
 
-        <section>
-            <p class="section-subtitle">a thousand reasons why</p>
-            <h2 class="section-title">Why I Love You</h2>
-            <div class="reasons-grid">
-                <div class="reason-card">
-                    <div class="reason-icon">✨</div>
-                    <div class="reason-title">Your Smile</div>
-                    <div class="reason-desc">It lights up every room and every corner of my heart simultaneously.</div>
-                </div>
-                <div class="reason-card">
-                    <div class="reason-icon">💫</div>
-                    <div class="reason-title">Your Soul</div>
-                    <div class="reason-desc">Rare, genuine, and more beautiful than any flower ever grown.</div>
-                </div>
-                <div class="reason-card">
-                    <div class="reason-icon">🎵</div>
-                    <div class="reason-title">Your Laughter</div>
-                    <div class="reason-desc">The best sound in the universe. My favourite melody, always.</div>
-                </div>
-                <div class="reason-card">
-                    <div class="reason-icon">🤍</div>
-                    <div class="reason-title">Simply You</div>
-                    <div class="reason-desc">Every version of you, every moment — you are more than enough.</div>
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <p class="section-subtitle">captured in time</p>
-            <h2 class="section-title">Your Beautiful<br>Pictures</h2>
-            
-            <div class="gallery-grid">
-                <div class="photo-placeholder">
-                    [ Tempat Foto 1 ]
-                    </div>
-                <div class="photo-placeholder">
-                    [ Tempat Foto 2 ]
-                    </div>
-                <div class="photo-placeholder">
-                    [ Tempat Foto 3 ]
-                    </div>
-                <div class="photo-placeholder">
-                    [ Tempat Foto 4 ]
-                    </div>
-            </div>
-        </section>
-
-        <section class="footer">
-            <p class="section-subtitle">always & forever</p>
-            <h2 class="section-title">You Are Loved<br>Beyond Words</h2>
-            <p class="paragraph">No matter where life takes us, know that somewhere in the universe, there is a garden blooming with every feeling I have ever held for you. You deserve the world.</p>
-            <p class="serif" style="margin-top: 30px; font-style: italic;">Made with love, just for you 🤍</p>
-        </section>
-
+    <div class="modal" id="imageModal">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <img id="modalImg" src="" alt="Fullscreen">
     </div>
 
     <script>
-        function openGift() {
-            const intro = document.getElementById('intro-screen');
-            const main = document.getElementById('main-content');
-            
-            // Efek fade out untuk kado
-            intro.style.opacity = '0';
-            
-            setTimeout(() => {
-                intro.style.display = 'none';
-                main.style.display = 'block';
-                
-                // Jika nanti kamu menambahkan audio, aktifkan baris di bawah ini:
-                // document.querySelector('audio').play();
-            }, 1000); // Menunggu 1 detik sesuai transisi CSS
+        /* =========================================
+           1. SCROLL REVEAL ANIMATION
+        ========================================= */
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        revealElements.forEach(el => {
+            revealObserver.observe(el);
+            // Trigger awal untuk elemen yang sudah ada di viewport saat load
+            if(el.getBoundingClientRect().top < window.innerHeight) {
+                el.classList.add('active');
+            }
+        });
+
+        /* =========================================
+           2. MUSIC PLAYER LOGIC
+        ========================================= */
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const cover = document.getElementById('cover');
+        const progress = document.getElementById('progress');
+        const progressContainer = document.getElementById('progress-container');
+        let isPlaying = false;
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                playBtn.innerHTML = '▶';
+                cover.classList.remove('playing');
+            } else {
+                audio.play();
+                playBtn.innerHTML = '⏸';
+                cover.classList.add('playing');
+            }
+            isPlaying = !isPlaying;
         }
+
+        function prevSong() {
+            // Karena ini single song placeholder, kita restart lagunya
+            audio.currentTime = 0;
+            if(!isPlaying) togglePlay();
+        }
+
+        function nextSong() {
+            // Karena ini single song placeholder, kita restart lagunya
+            audio.currentTime = 0;
+            if(!isPlaying) togglePlay();
+        }
+
+        // Update Progress Bar
+        audio.addEventListener('timeupdate', () => {
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = `${percent}%`;
+        });
+
+        // Click on progress bar to seek
+        progressContainer.addEventListener('click', (e) => {
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        });
+
+        // Auto Next saat selesai
+        audio.addEventListener('ended', () => {
+            audio.currentTime = 0;
+            audio.play();
+        });
+
+        /* =========================================
+           3. GALLERY MODAL LOGIC
+        ========================================= */
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        const galleryItems = document.querySelectorAll('.gallery-item img');
+
+        galleryItems.forEach(img => {
+            img.addEventListener('click', () => {
+                modalImg.src = img.src;
+                modal.classList.add('active');
+            });
+        });
+
+        function closeModal() {
+            modal.classList.remove('active');
+            // Sedikit delay untuk transisi tutup
+            setTimeout(() => { modalImg.src = ''; }, 400); 
+        }
+
+        // Tutup modal jika area luar gambar di-klik
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        /* =========================================
+           4. FALLING PETALS ANIMATION (CANVAS)
+        ========================================= */
+        const canvas = document.getElementById('petals');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let petalsArray = [];
+        const numberOfPetals = 60; // Minimal 50 sesuai request
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Petal {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height - height;
+                this.size = Math.random() * 8 + 4;
+                this.speedY = Math.random() * 1 + 0.5;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 0.05 - 0.025;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX + Math.sin(this.y * 0.01) * 0.5; // Efek angin berayun
+                this.angle += this.spin;
+
+                // Reset petal ke atas jika melewati layar
+                if (this.y > height + this.size) {
+                    this.y = 0 - this.size;
+                    this.x = Math.random() * width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                
+                // Menggambar bentuk kelopak menggunakan ellipse
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(244, 143, 177, ${this.opacity})`; // Pink petal color
+                ctx.ellipse(0, 0, this.size, this.size * 0.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+        }
+
+        function initPetals() {
+            petalsArray = [];
+            for (let i = 0; i < numberOfPetals; i++) {
+                petalsArray.push(new Petal());
+            }
+        }
+
+        function animatePetals() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < petalsArray.length; i++) {
+                petalsArray[i].update();
+                petalsArray[i].draw();
+            }
+            requestAnimationFrame(animatePetals);
+        }
+
+        initPetals();
+        animatePetals();
+
     </script>
 </body>
 </html>
