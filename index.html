@@ -1,24 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You, My Everything</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     <style>
-        /* CSS Variables */
         :root {
-            --bg-dark: #12000a;
-            --bg-mid: #240010;
-            --bg-light: #3b0019;
-            --text-main: #fdf5f6;
-            --accent-pink: #f48fb1;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-1: #18000f;
+            --bg-2: #220013;
+            --bg-3: #2d0019;
+            --bg-4: #3a0022;
+            --accent-1: #ff7eb6;
+            --accent-2: #ff9ac7;
+            --accent-3: #ffb4d6;
+            --text-main: #ffffff;
+            --text-muted: #f8dce7;
         }
 
-        /* Reset & Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -26,200 +27,358 @@
         }
 
         body {
-            background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid), var(--bg-light));
-            background-attachment: fixed;
+            background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3), var(--bg-4));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: var(--text-main);
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Cormorant Garamond', serif;
             overflow-x: hidden;
-            min-height: 100vh;
-            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Background Effects */
-        .vignette {
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        canvas {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle, transparent 40%, #050002 120%);
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
             pointer-events: none;
+        }
+
+        .content-wrapper {
+            position: relative;
             z-index: 1;
         }
 
-        canvas#petals {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none;
-            z-index: 2;
-        }
-
         /* Typography */
-        h1, h2, h3, .serif {
+        h1, h2, h3 {
             font-family: 'Playfair Display', serif;
             font-weight: 400;
         }
-        
-        .pink-text {
-            color: var(--accent-pink);
-            text-shadow: 0 0 10px rgba(244, 143, 177, 0.3);
+
+        .highlight-pink {
+            font-family: 'Great Vibes', cursive;
+            color: var(--accent-2);
+            font-weight: 400;
+            text-transform: lowercase;
+            text-shadow: 0 0 10px rgba(255, 126, 182, 0.4);
         }
 
-        .subtitle {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-size: 1.2rem;
-            color: #d4a5b4;
-            letter-spacing: 2px;
+        .small-title {
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
             margin-bottom: 10px;
+            display: block;
         }
 
-        /* Layout Container */
-        .container {
-            position: relative;
-            z-index: 10;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        /* Glassmorphism Utility */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        /* Hero Section */
-        .hero {
-            min-height: 80vh;
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1.2s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 154, 199, 0.5); transform: scale(1); }
+            50% { text-shadow: 0 0 20px rgba(255, 154, 199, 0.8), 0 0 30px rgba(255, 154, 199, 0.6); transform: scale(1.1); }
+            100% { text-shadow: 0 0 10px rgba(255, 154, 199, 0.5); transform: scale(1); }
+        }
+
+        /* Sections General */
+        section {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 80px 20px;
             text-align: center;
-            margin-bottom: 50px;
         }
 
-        .hero h1 {
-            font-size: clamp(3rem, 6vw, 5rem);
-            line-height: 1.2;
-            margin-bottom: 20px;
-        }
-
-        /* Floating Music Player */
+        /* Music Player */
         .music-player {
             position: fixed;
-            left: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 280px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .player-info {
+            bottom: 25px;
+            left: 25px;
+            z-index: 100;
             display: flex;
             align-items: center;
-            gap: 15px;
+            padding: 10px 15px;
+            gap: 12px;
+            width: 260px;
+            transition: transform 0.3s ease;
         }
 
-        .player-cover {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: url('https://picsum.photos/seed/cover/100/100') center/cover;
-            animation: spin 10s linear infinite;
+        .music-player:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 126, 182, 0.3);
+        }
+
+        .album-cover {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            object-fit: cover;
+            animation: spin 8s linear infinite;
             animation-play-state: paused;
         }
 
-        .player-cover.playing {
+        .album-cover.playing {
             animation-play-state: running;
+            border-radius: 50%;
         }
 
         @keyframes spin {
             100% { transform: rotate(360deg); }
         }
 
-        .player-text h4 { font-size: 0.9rem; margin-bottom: 3px; }
-        .player-text p { font-size: 0.75rem; color: #d4a5b4; }
-
-        .player-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
+        .song-info {
+            flex: 1;
+            text-align: left;
         }
 
-        .btn-play, .btn-nav {
-            background: none;
-            border: none;
+        .song-title {
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-main);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: transform 0.2s, color 0.2s;
+            font-family: sans-serif;
+            margin-bottom: 2px;
         }
 
-        .btn-play { font-size: 2rem; color: var(--accent-pink); }
-        .btn-play:hover, .btn-nav:hover { transform: scale(1.1); }
+        .song-artist {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: sans-serif;
+        }
 
         .progress-bar {
             width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.2);
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 2px;
-            cursor: pointer;
+            margin-top: 6px;
             position: relative;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--accent-pink);
-            border-radius: 2px;
-            transition: width 0.1s linear;
+            overflow: hidden;
         }
 
-        /* Gallery Section (Pinterest Style) */
-        .gallery-container {
-            margin-bottom: 100px;
-            column-count: 4;
-            column-gap: 20px;
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-2);
+            box-shadow: 0 0 5px var(--accent-1);
+        }
+
+        .play-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .play-btn:hover {
+            color: var(--accent-2);
+        }
+
+        /* Section 1: Hero */
+        .hero-emoji {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero h1 .highlight-pink {
+            font-size: 56px;
+            display: block;
+            margin-top: -5px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 400px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .btn-sakura {
+            background: rgba(255, 126, 182, 0.15);
+            border: 1px solid rgba(255, 126, 182, 0.4);
+            color: var(--accent-3);
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-style: italic;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sakura:hover {
+            background: rgba(255, 126, 182, 0.3);
+            box-shadow: 0 0 20px rgba(255, 126, 182, 0.4);
+            transform: translateY(-3px);
+        }
+
+        /* Section 2: Why I Love You */
+        .reasons h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .card {
+            padding: 25px;
+            text-align: left;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 126, 182, 0.4);
+            box-shadow: 0 0 20px rgba(255, 126, 182, 0.15);
+            transform: translateX(10px);
+        }
+
+        .card-icon {
+            font-size: 28px;
+        }
+
+        .card-text {
+            font-size: 22px;
+            font-family: 'Playfair Display', serif;
+            color: var(--text-main);
+        }
+
+        /* Section 3: Gallery */
+        .gallery-section h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-section h2 .highlight-pink {
+            font-size: 48px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
         }
 
         .gallery-item {
-            break-inside: avoid;
-            margin-bottom: 20px;
-            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .img-wrapper {
+            width: 100%;
+            aspect-ratio: 3/4;
             overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            border-radius: 12px;
             cursor: pointer;
             position: relative;
-            transition: all 0.4s ease;
         }
 
-        .gallery-item img {
+        .img-wrapper img {
             width: 100%;
-            display: block;
-            transition: transform 0.5s ease;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: all 0.5s ease;
         }
 
-        .gallery-item:hover {
-            box-shadow: 0 0 20px rgba(244, 143, 177, 0.4);
-            transform: translateY(-5px);
+        .img-wrapper:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.08);
         }
 
-        .gallery-item:hover img {
-            transform: scale(1.05);
+        .img-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        /* Fullscreen Modal */
+        .img-wrapper:hover::after {
+            opacity: 1;
+        }
+
+        .foto-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Modal */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(10, 0, 5, 0.9);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -235,371 +394,430 @@
 
         .modal img {
             max-width: 90%;
-            max-height: 90vh;
+            max-height: 85vh;
             border-radius: 16px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-            transform: scale(0.8);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 30px rgba(255, 126, 182, 0.2);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.5, 0, 0, 1);
         }
 
         .modal.active img {
             transform: scale(1);
         }
 
-        .modal-close {
+        .close-modal {
             position: absolute;
-            top: 30px; right: 40px;
-            font-size: 2rem;
+            top: 30px;
+            right: 30px;
             color: white;
+            font-size: 40px;
             cursor: pointer;
-            background: none; border: none;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
-        /* Love Message Section */
-        .love-message {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 100px auto;
-            padding: 40px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--glass-border);
-            border-radius: 30px;
+        /* Section 4: Always & Forever */
+        .message-section h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+        
+        .message-section h2 .highlight-pink {
+            font-size: 44px;
+            display: block;
         }
 
-        .love-message h2 {
-            font-size: clamp(2rem, 4vw, 3rem);
-            margin-bottom: 20px;
-        }
-
-        .love-message p {
-            font-size: 1.1rem;
+        .love-paragraph {
+            max-width: 500px;
+            font-size: 20px;
             line-height: 1.8;
-            color: #ebd1d9;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
         }
 
-        /* Floating Heart */
-        .floating-heart {
-            text-align: center;
-            font-size: 4rem;
-            margin: 50px 0;
-            animation: float 3s ease-in-out infinite, pulseGlow 2s infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { text-shadow: 0 0 20px rgba(244, 143, 177, 0.5); transform: scale(1); }
-            50% { text-shadow: 0 0 40px rgba(244, 143, 177, 0.8); transform: scale(1.1); }
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 40px 0 80px 0;
+        .heart-icon {
+            font-size: 40px;
+            margin-bottom: 30px;
         }
 
         .closing-text {
-            font-family: 'Playfair Display', serif;
+            font-size: 22px;
             font-style: italic;
-            font-size: 1.5rem;
-            color: var(--accent-pink);
+            color: var(--accent-2);
         }
 
-        /* Scroll Reveal Animation Classes */
-        .reveal {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
-        }
-        
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
+        /* Section 5: Final Letter */
+        .final-letter {
+            padding: 50px 30px;
+            max-width: 600px;
+            width: 90%;
+            margin: 0 auto;
+            text-align: left;
         }
 
-        /* Responsive */
-        @media (max-width: 992px) {
-            .gallery-container { column-count: 3; }
-            .music-player { left: 20px; width: 250px; }
+        .final-letter h2 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            text-align: center;
         }
 
-        @media (max-width: 768px) {
-            .gallery-container { column-count: 2; column-gap: 15px; }
-            .gallery-item { margin-bottom: 15px; border-radius: 16px; }
-            
-            /* Music Player becomes fixed bottom on mobile */
-            .music-player {
-                top: auto;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 90%;
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                padding: 15px;
-            }
-            .player-controls { gap: 15px; }
-            .progress-bar { display: none; /* Hide progress bar on mobile to save space */ }
-            .love-message { padding: 30px 20px; margin: 0 20px 80px 20px; }
+        .final-letter h2 .highlight-pink {
+            font-size: 40px;
+        }
+
+        .letter-content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .letter-content p {
+            margin-bottom: 15px;
+        }
+
+        .signature {
+            text-align: right;
+            font-size: 24px;
+            color: var(--accent-2);
+            font-family: 'Great Vibes', cursive;
+        }
+
+        /* Responsive larger screens */
+        @media (min-width: 768px) {
+            .hero h1 { font-size: 64px; }
+            .hero h1 .highlight-pink { font-size: 82px; }
+            .cards-container { flex-direction: row; justify-content: center; max-width: 800px; }
+            .card { flex: 1; flex-direction: column; text-align: center; justify-content: center; padding: 40px 20px; }
+            .gallery-grid { grid-template-columns: repeat(4, 1fr); max-width: 900px; }
+            .message-section h2 { font-size: 48px; }
+            .message-section h2 .highlight-pink { font-size: 64px; }
+            .final-letter { padding: 60px 50px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="vignette"></div>
-    <canvas id="petals"></canvas>
+    <canvas id="bg-canvas"></canvas>
 
-    <div class="music-player">
-        <div class="player-info">
-            <div class="player-cover" id="cover"></div>
-            <div class="player-text">
-                <h4 id="song-title">Beautiful In White</h4>
-                <p id="song-artist">Westlife</p>
+    <div class="music-player glass">
+        <img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?q=80&w=200&auto=format&fit=crop" alt="Album Cover" class="album-cover" id="album-cover">
+        <div class="song-info">
+            <div class="song-title">Dandelions</div>
+            <div class="song-artist">Ruth B.</div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
             </div>
         </div>
-        <div style="flex-grow: 1; width: 100%;">
-            <div class="progress-bar" id="progress-container">
-                <div class="progress-fill" id="progress"></div>
-            </div>
-        </div>
-        <div class="player-controls">
-            <button class="btn-nav" onclick="prevSong()">⏮</button>
-            <button class="btn-play" id="play-btn" onclick="togglePlay()">▶</button>
-            <button class="btn-nav" onclick="nextSong()">⏭</button>
-        </div>
-        <audio id="audio" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-guitar-background-music-111531.mp3"></audio>
+        <button class="play-btn" id="play-btn">▶</button>
+        <audio id="bg-music" loop>
+            <source src="#" type="audio/mpeg">
+        </audio>
     </div>
 
-    <main class="container">
-        
+    <div class="content-wrapper">
         <section class="hero reveal">
-            <p class="subtitle">captured in time</p>
-            <h1>Your Beautiful <span class="pink-text">Pictures</span></h1>
+            <div class="hero-emoji floating">🌸</div>
+            <span class="small-title">a love letter in bloom</span>
+            <h1>For You, <br><span class="highlight-pink">My Everything</span></h1>
+            <p>Every moment with you is a beautiful chapter in my life. This is a little space dedicated to us.</p>
+            <a href="#reasons" class="btn-sakura">Open Letter ✨</a>
         </section>
 
-        <section class="gallery-container">
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love1/400/600" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love2/400/500" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love3/400/700" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love4/400/450" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love5/400/650" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love6/400/550" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love7/400/600" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love8/400/400" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love9/400/750" alt="Memory"></div>
-            <div class="gallery-item reveal"><img src="https://picsum.photos/seed/love10/400/500" alt="Memory"></div>
+        <section id="reasons" class="reasons reveal">
+            <span class="small-title">what makes you special</span>
+            <h2>Why I Love You</h2>
+            <div class="cards-container">
+                <div class="card glass">
+                    <div class="card-icon">🫶</div>
+                    <div class="card-text">Your Soul</div>
+                </div>
+                <div class="card glass">
+                    <div class="card-icon">🌸</div>
+                    <div class="card-text">Your Kindness</div>
+                </div>
+                <div class="card glass">
+                    <div class="card-icon">💖</div>
+                    <div class="card-text">Your Smile</div>
+                </div>
+            </div>
         </section>
 
-        <section class="love-message reveal">
-            <p class="subtitle">always & forever</p>
-            <h2>You Are Loved <span class="pink-text">Beyond Words</span></h2>
-            <p>
-                In a world full of ordinary moments, you are the extraordinary one. The way you laugh, the way you care, the way you simply exist — it fills every corner of my world with something I never knew I needed. No matter where life takes us, know that somewhere in the universe, there is a garden blooming with every feeling I have ever held for you.
+        <section class="gallery-section reveal">
+            <span class="small-title">captured in time</span>
+            <h2>Your Beautiful <span class="highlight-pink">Pictures</span></h2>
+            <div class="gallery-grid">
+                <div class="gallery-item reveal">
+                    <div class="img-wrapper" onclick="openModal('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=600&auto=format&fit=crop')">
+                        <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=400&auto=format&fit=crop" alt="Foto 1">
+                    </div>
+                    <span class="foto-label">foto 1</span>
+                </div>
+                <div class="gallery-item reveal" style="transition-delay: 0.1s;">
+                    <div class="img-wrapper" onclick="openModal('https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=600&auto=format&fit=crop')">
+                        <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=400&auto=format&fit=crop" alt="Foto 2">
+                    </div>
+                    <span class="foto-label">foto 2</span>
+                </div>
+                <div class="gallery-item reveal" style="transition-delay: 0.2s;">
+                    <div class="img-wrapper" onclick="openModal('https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop')">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop" alt="Foto 3">
+                    </div>
+                    <span class="foto-label">foto 3</span>
+                </div>
+                <div class="gallery-item reveal" style="transition-delay: 0.3s;">
+                    <div class="img-wrapper" onclick="openModal('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop')">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop" alt="Foto 4">
+                    </div>
+                    <span class="foto-label">foto 4</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="message-section reveal">
+            <span class="small-title floating">🌸 always & forever</span>
+            <h2>You Are Loved <span class="highlight-pink">Beyond Words</span></h2>
+            <p class="love-paragraph">
+                In a world full of temporary things, you are a perpetual feeling. I just wanted to remind you how deeply and endlessly you are loved, today and every day after.
             </p>
+            <div class="heart-icon pulse-glow">💗</div>
+            <p class="closing-text">little soul, you are my gem</p>
         </section>
 
-        <div class="floating-heart reveal">
-            💗
-        </div>
-
-        <footer class="reveal">
-            <p class="closing-text">made with love, just for you 🌸</p>
-        </footer>
-
-    </main>
+        <section class="reveal">
+            <div class="final-letter glass">
+                <h2>You are my <span class="highlight-pink">wildest dream</span> come true.</h2>
+                <div class="letter-content">
+                    <p>My love,</p>
+                    <p>I built this little digital space just to show a fraction of what I feel for you. You bring so much light into my life, making the heavy days lighter and the good days absolutely magical.</p>
+                    <p>Thank you for your patience, your warmth, and the beautiful way you see the world. I promise to keep choosing you, in a hundred lifetimes, in a hundred worlds, in any version of reality.</p>
+                    <p>I love you, more than words can say.</p>
+                </div>
+                <div class="signature">always yours ♡</div>
+            </div>
+        </section>
+    </div>
 
     <div class="modal" id="imageModal">
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-        <img id="modalImg" src="" alt="Fullscreen">
+        <span class="close-modal" onclick="closeModal()">×</span>
+        <img src="" alt="Fullscreen Image" id="modalImg">
     </div>
 
     <script>
-        /* =========================================
-           1. SCROLL REVEAL ANIMATION
-        ========================================= */
+        // 1. SCROLL REVEAL ANIMATION
         const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
 
-        const revealObserver = new IntersectionObserver((entries) => {
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            });
+        }, revealOptions);
+
+        revealElements.forEach(el => revealOnScroll.observe(el));
+        
+        // Trigger for elements already in view on load
+        setTimeout(() => {
+            revealElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if(rect.top < window.innerHeight) {
+                    el.classList.add('active');
                 }
             });
-        }, { threshold: 0.1 });
+        }, 100);
 
-        revealElements.forEach(el => {
-            revealObserver.observe(el);
-            // Trigger awal untuk elemen yang sudah ada di viewport saat load
-            if(el.getBoundingClientRect().top < window.innerHeight) {
-                el.classList.add('active');
-            }
-        });
-
-        /* =========================================
-           2. MUSIC PLAYER LOGIC
-        ========================================= */
-        const audio = document.getElementById('audio');
+        // 2. MUSIC PLAYER LOGIC
+        const bgMusic = document.getElementById('bg-music');
         const playBtn = document.getElementById('play-btn');
-        const cover = document.getElementById('cover');
-        const progress = document.getElementById('progress');
-        const progressContainer = document.getElementById('progress-container');
+        const albumCover = document.getElementById('album-cover');
+        const progressBar = document.getElementById('progress');
         let isPlaying = false;
 
-        function togglePlay() {
-            if (isPlaying) {
-                audio.pause();
+        playBtn.addEventListener('click', () => {
+            if(isPlaying) {
+                bgMusic.pause();
                 playBtn.innerHTML = '▶';
-                cover.classList.remove('playing');
+                albumCover.classList.remove('playing');
             } else {
-                audio.play();
+                bgMusic.play().catch(e => console.log("Audio play failed:", e));
                 playBtn.innerHTML = '⏸';
-                cover.classList.add('playing');
+                albumCover.classList.add('playing');
             }
             isPlaying = !isPlaying;
-        }
-
-        function prevSong() {
-            // Karena ini single song placeholder, kita restart lagunya
-            audio.currentTime = 0;
-            if(!isPlaying) togglePlay();
-        }
-
-        function nextSong() {
-            // Karena ini single song placeholder, kita restart lagunya
-            audio.currentTime = 0;
-            if(!isPlaying) togglePlay();
-        }
-
-        // Update Progress Bar
-        audio.addEventListener('timeupdate', () => {
-            const percent = (audio.currentTime / audio.duration) * 100;
-            progress.style.width = `${percent}%`;
         });
 
-        // Click on progress bar to seek
-        progressContainer.addEventListener('click', (e) => {
-            const width = progressContainer.clientWidth;
-            const clickX = e.offsetX;
-            const duration = audio.duration;
-            audio.currentTime = (clickX / width) * duration;
-        });
+        // Fake progress bar animation (karena tidak ada source audio nyata secara default)
+        let progressVal = 0;
+        setInterval(() => {
+            if(isPlaying) {
+                progressVal += 0.5;
+                if(progressVal > 100) progressVal = 0;
+                progressBar.style.width = progressVal + '%';
+            }
+        }, 1000);
 
-        // Auto Next saat selesai
-        audio.addEventListener('ended', () => {
-            audio.currentTime = 0;
-            audio.play();
-        });
-
-        /* =========================================
-           3. GALLERY MODAL LOGIC
-        ========================================= */
+        // 3. MODAL GALLERY LOGIC
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImg');
-        const galleryItems = document.querySelectorAll('.gallery-item img');
 
-        galleryItems.forEach(img => {
-            img.addEventListener('click', () => {
-                modalImg.src = img.src;
-                modal.classList.add('active');
-            });
-        });
+        function openModal(src) {
+            modalImg.src = src;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
         function closeModal() {
             modal.classList.remove('active');
-            // Sedikit delay untuk transisi tutup
-            setTimeout(() => { modalImg.src = ''; }, 400); 
+            document.body.style.overflow = 'auto';
+            setTimeout(() => { modalImg.src = ''; }, 400);
         }
 
-        // Tutup modal jika area luar gambar di-klik
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
+            if (e.target === modal) closeModal();
         });
 
-        /* =========================================
-           4. FALLING PETALS ANIMATION (CANVAS)
-        ========================================= */
-        const canvas = document.getElementById('petals');
-        const ctx = canvas.getContext('2d');
-        
-        let width, height;
-        let petalsArray = [];
-        const numberOfPetals = 60; // Minimal 50 sesuai request
+        // 4. SMOOTH SCROLL FOR LINKS
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
 
-        function resizeCanvas() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
+        // 5. CANVAS BACKGROUND (SAKURA & PARTICLES)
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let petals = [];
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        window.addEventListener('resize', resize);
+        resize();
 
+        // Sakura Petal Object
         class Petal {
             constructor() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height - height;
-                this.size = Math.random() * 8 + 4;
-                this.speedY = Math.random() * 1 + 0.5;
-                this.speedX = Math.random() * 1 - 0.5;
-                this.opacity = Math.random() * 0.5 + 0.2;
+                this.w = 10 + Math.random() * 15;
+                this.h = 6 + Math.random() * 10;
+                this.opacity = 0.3 + Math.random() * 0.5;
+                this.speedY = 1 + Math.random() * 2;
+                this.speedX = -1 + Math.random() * 2;
                 this.angle = Math.random() * 360;
-                this.spin = Math.random() * 0.05 - 0.025;
+                this.spin = -0.05 + Math.random() * 0.1;
+                this.color = Math.random() > 0.5 ? '#ffb4d6' : '#ff9ac7';
             }
 
             update() {
                 this.y += this.speedY;
-                this.x += this.speedX + Math.sin(this.y * 0.01) * 0.5; // Efek angin berayun
+                this.x += this.speedX;
                 this.angle += this.spin;
 
-                // Reset petal ke atas jika melewati layar
-                if (this.y > height + this.size) {
-                    this.y = 0 - this.size;
+                if (this.y > height) {
+                    this.y = -this.h;
                     this.x = Math.random() * width;
                 }
+                if (this.x > width + this.w) this.x = -this.w;
+                if (this.x < -this.w) this.x = width + this.w;
             }
 
             draw() {
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.angle);
-                
-                // Menggambar bentuk kelopak menggunakan ellipse
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+
+                // Draw petal shape
                 ctx.beginPath();
-                ctx.fillStyle = `rgba(244, 143, 177, ${this.opacity})`; // Pink petal color
-                ctx.ellipse(0, 0, this.size, this.size * 0.5, 0, 0, Math.PI * 2);
+                ctx.ellipse(0, 0, this.w / 2, this.h / 2, 0, 0, 2 * Math.PI);
                 ctx.fill();
-                
                 ctx.restore();
             }
         }
 
-        function initPetals() {
-            petalsArray = [];
-            for (let i = 0; i < numberOfPetals; i++) {
-                petalsArray.push(new Petal());
+        // Glowing Particle Object
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = height + Math.random() * height;
+                this.size = 1 + Math.random() * 3;
+                this.opacity = 0.1 + Math.random() * 0.4;
+                this.speedY = -(0.5 + Math.random() * 1.5);
+                this.speedX = -0.5 + Math.random() * 1;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+
+                if (this.y < -10) {
+                    this.y = height + 10;
+                    this.x = Math.random() * width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#ff7eb6';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#ff7eb6';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
             }
         }
 
-        function animatePetals() {
+        // Initialize entities
+        for (let i = 0; i < 35; i++) {
+            petals.push(new Petal());
+        }
+        for (let i = 0; i < 40; i++) {
+            particles.push(new Particle());
+        }
+
+        // Animation Loop
+        function animate() {
             ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < petalsArray.length; i++) {
-                petalsArray[i].update();
-                petalsArray[i].draw();
-            }
-            requestAnimationFrame(animatePetals);
+            
+            // Draw Bokeh glow
+            ctx.globalCompositeOperation = 'lighter';
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            ctx.globalCompositeOperation = 'source-over';
+
+            petals.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
         }
 
-        initPetals();
-        animatePetals();
-
+        animate();
     </script>
 </body>
 </html>
