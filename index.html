@@ -1,224 +1,322 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy 10th Mensiv!</title>
+    <title>For You, My Everything</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* === RESET & GENERAL === */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
-        
-        /* === BACKGROUND STARS === */
-        .stars { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; background: #0a0508; pointer-events: none; }
-        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 2s infinite ease-in-out alternate; }
-        @keyframes twinkle { 0% { opacity: 0.2; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
+        :root {
+            --bg-color: #1a0b12; /* Dark plum / maroon gelap */
+            --text-primary: #fdf5f6; /* Soft pinkish white */
+            --text-secondary: #d4a5b4; /* Muted pink */
+            --accent: #e57373;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+        }
 
-        /* === SCREEN 1: MATRIX & TEXT === */
-        #screen-1 { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 10; background: #000; flex-direction: column; }
-        #matrixCanvas { position: absolute; top: 0; left: 0; z-index: -1; }
-        .focus-text { font-size: 4rem; font-weight: bold; color: #ff69b4; text-shadow: 0 0 15px #ff69b4; text-align: center; opacity: 0; position: absolute; transition: opacity 0.3s ease; }
-        .focus-text.show { opacity: 1; animation: popIn 0.3s ease-out; }
-        @keyframes popIn { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        /* === SCREEN 2: ENVELOPE === */
-        #screen-2 { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: none; justify-content: center; align-items: center; z-index: 20; }
-        .envelope-wrapper { position: relative; width: 320px; height: 220px; perspective: 1000px; cursor: pointer; transition: transform 0.3s; margin-top: 100px; }
-        .envelope-wrapper:hover { transform: scale(1.03); }
-        
-        /* Envelope parts & Z-index trick */
-        .env-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #b03052; border-radius: 8px; z-index: 1; }
-        
-        .letter { position: absolute; bottom: 10px; left: 5%; width: 90%; height: 95%; background: #fff; z-index: 2; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.8s ease-in-out; display: flex; flex-direction: column; align-items: center; padding: 20px 15px; overflow-y: auto; }
-        .letter p { font-size: 14px; color: #333; line-height: 1.6; text-align: center; font-style: italic; margin-bottom: 15px; }
-        .next-btn { padding: 8px 20px; background: #d85c82; color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; opacity: 0; transition: opacity 0.5s ease 0.8s; pointer-events: none; }
-        
-        /* Front flaps */
-        .env-front { position: absolute; bottom: 0; left: 0; width: 0; height: 0; z-index: 3; border-left: 160px solid #d85c82; border-right: 160px solid #d85c82; border-bottom: 120px solid #e86d93; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; pointer-events: none; }
-        
-        /* Top Flap that opens */
-        .env-flap { position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: 4; border-left: 160px solid transparent; border-right: 160px solid transparent; border-top: 130px solid #c84b71; transform-origin: top; transition: transform 0.6s ease-in-out, z-index 0.1s 0.3s; }
-        
-        .heart-seal { position: absolute; top: 110px; left: 145px; width: 30px; height: 30px; background: #ff4d4d; border-radius: 50%; z-index: 5; transform: rotate(-45deg); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: opacity 0.3s; }
-        .heart-seal::before, .heart-seal::after { content: ''; position: absolute; width: 30px; height: 30px; background: #ff4d4d; border-radius: 50%; }
-        .heart-seal::before { top: -15px; left: 0; }
-        .heart-seal::after { top: 0; left: 15px; }
+        body {
+            background: radial-gradient(circle at top, #3a1c2e 0%, var(--bg-color) 100%);
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-        /* Animations for opening */
-        .env-flap.open { transform: rotateX(180deg); z-index: 0; }
-        .letter.open { transform: translateY(-160px); z-index: 5; }
-        .letter.open .next-btn { opacity: 1; pointer-events: auto; }
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
 
-        /* === SCREEN 3: HEART COLLAGE === */
-        #screen-3 { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: none; z-index: 30; flex-direction: column; justify-content: center; align-items: center; }
-        #heart-container { position: relative; width: 350px; height: 350px; }
-        .heart-img { position: absolute; width: 55px; height: 65px; object-fit: cover; background: #fff; padding: 4px 4px 12px 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); opacity: 0; transform: scale(0); transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .heart-img.show { opacity: 1; }
-        #closingText { position: absolute; bottom: 15%; font-size: 1.5rem; color: #ffb6c1; font-style: italic; opacity: 0; transition: opacity 2s; text-align: center; text-shadow: 0 0 10px #ffb6c1; }
+        /* --- INTRO SCREEN (KADO) --- */
+        #intro-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 1s ease-out;
+        }
 
+        .gift-box {
+            font-size: 5rem;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            transition: transform 0.3s;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.1);
+        }
+
+        .tap-text {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        /* --- MAIN CONTENT --- */
+        #main-content {
+            display: none; /* Disembunyikan sampai kado diklik */
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Section Spacing */
+        section {
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* Music Player Placeholder */
+        .music-player {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .music-cover {
+            width: 60px;
+            height: 60px;
+            background: #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        .music-info {
+            text-align: left;
+        }
+
+        .music-info p { margin: 0; font-size: 0.9rem; }
+        .music-info span { font-size: 0.7rem; color: var(--text-secondary); }
+
+        /* Text Content */
+        .paragraph {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        /* Grid Reasons */
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .reason-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .reason-icon {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .reason-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .reason-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Gallery Grid (Tempat Foto) */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Nanti class ini dipakai kalau img sudah ada di VS Code */
+        .photo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+            display: none; /* Hapus ini nanti di VS Code kalau gambar sudah dimasukkan */
+        }
+
+        .footer {
+            margin-top: 100px;
+            padding-bottom: 40px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="stars" id="starsBg"></div>
-
-    <div id="screen-1">
-        <canvas id="matrixCanvas"></canvas>
-        <div id="word-display" class="focus-text">3</div>
+    <div id="intro-screen">
+        <div class="gift-box" onclick="openGift()">🎁</div>
+        <p class="tap-text">Tap to open</p>
     </div>
 
-    <div id="screen-2">
-        <div class="envelope-wrapper" onclick="openEnvelope()">
-            <div class="env-back"></div>
-            <div class="letter" id="letter">
-                <p>"Happy 10th Mensiv, sayanggkuu.<br><br>Every single day with you feels like a dream I never want to wake up from. No matter the distance or time, you are always the closest person to my heart. Thank you for being my everything."</p>
-                <button class="next-btn" onclick="goToScreen3(event)">Click Me &hearts;</button>
-            </div>
-            <div class="env-front"></div>
-            <div class="env-flap" id="flap"></div>
-            <div class="heart-seal" id="seal"></div>
+    <div id="main-content">
+        
+        <div class="music-player">
+            <div class="music-cover">Cover</div>
+            <div class="music-info">
+                <p>Sampai Jadi Debu</p>
+                <span>Banda Neira</span>
+                </div>
         </div>
-    </div>
 
-    <div id="screen-3">
-        <div id="heart-container"></div>
-        <div id="closingText">My home, my heart, my everything.</div>
+        <section>
+            <p class="section-subtitle">a love letter in bloom</p>
+            <h1 class="section-title">For You,<br>My Everything</h1>
+            <p class="paragraph">Every petal holds a whisper of how much you mean to me.</p>
+        </section>
+
+        <section>
+            <p class="section-subtitle">🌸 from my heart 🌸</p>
+            <h2 class="section-title" style="font-size: 2rem;">You are my<br>wildest dream<br>come true.</h2>
+            <p class="paragraph">In a world full of ordinary moments, you are the extraordinary one. The way you laugh, the way you care, the way you simply exist — it fills every corner of my world with something I never knew I needed.</p>
+            <p class="serif" style="margin-top: 20px; font-style: italic;">~ Always yours ~</p>
+        </section>
+
+        <section>
+            <p class="section-subtitle">a thousand reasons why</p>
+            <h2 class="section-title">Why I Love You</h2>
+            <div class="reasons-grid">
+                <div class="reason-card">
+                    <div class="reason-icon">✨</div>
+                    <div class="reason-title">Your Smile</div>
+                    <div class="reason-desc">It lights up every room and every corner of my heart simultaneously.</div>
+                </div>
+                <div class="reason-card">
+                    <div class="reason-icon">💫</div>
+                    <div class="reason-title">Your Soul</div>
+                    <div class="reason-desc">Rare, genuine, and more beautiful than any flower ever grown.</div>
+                </div>
+                <div class="reason-card">
+                    <div class="reason-icon">🎵</div>
+                    <div class="reason-title">Your Laughter</div>
+                    <div class="reason-desc">The best sound in the universe. My favourite melody, always.</div>
+                </div>
+                <div class="reason-card">
+                    <div class="reason-icon">🤍</div>
+                    <div class="reason-title">Simply You</div>
+                    <div class="reason-desc">Every version of you, every moment — you are more than enough.</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <p class="section-subtitle">captured in time</p>
+            <h2 class="section-title">Your Beautiful<br>Pictures</h2>
+            
+            <div class="gallery-grid">
+                <div class="photo-placeholder">
+                    [ Tempat Foto 1 ]
+                    </div>
+                <div class="photo-placeholder">
+                    [ Tempat Foto 2 ]
+                    </div>
+                <div class="photo-placeholder">
+                    [ Tempat Foto 3 ]
+                    </div>
+                <div class="photo-placeholder">
+                    [ Tempat Foto 4 ]
+                    </div>
+            </div>
+        </section>
+
+        <section class="footer">
+            <p class="section-subtitle">always & forever</p>
+            <h2 class="section-title">You Are Loved<br>Beyond Words</h2>
+            <p class="paragraph">No matter where life takes us, know that somewhere in the universe, there is a garden blooming with every feeling I have ever held for you. You deserve the world.</p>
+            <p class="serif" style="margin-top: 30px; font-style: italic;">Made with love, just for you 🤍</p>
+        </section>
+
     </div>
 
     <script>
-        // --- BUAT BINTANG DI BACKGROUND ---
-        const starsContainer = document.getElementById('starsBg');
-        for(let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
-            star.style.left = Math.random() * 100 + 'vw';
-            star.style.top = Math.random() * 100 + 'vh';
-            star.style.animationDelay = Math.random() * 2 + 's';
-            starsContainer.appendChild(star);
-        }
-
-        // --- MATRIX RAIN EFFECT ---
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const chars = '01'.split('');
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        for (let x = 0; x < columns; x++) drops[x] = 1;
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ff69b4';
-            ctx.font = fontSize + 'px monospace';
-            for (let i = 0; i < drops.length; i++) {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            }
-        }
-        const matrixInterval = setInterval(drawMatrix, 50);
-
-        // --- KATA-KATA & HITUNG MUNDUR (SCREEN 1) ---
-        const sequence = ["3", "2", "1", "HAPPY", "10", "MONTHS", "MY LOVE"];
-        let seqIndex = 0;
-        const wordDisplay = document.getElementById('word-display');
-
-        function showNextWord() {
-            if (seqIndex < sequence.length) {
-                wordDisplay.innerText = sequence[seqIndex];
-                wordDisplay.className = 'focus-text show';
-                setTimeout(() => { wordDisplay.className = 'focus-text'; }, 700);
-                seqIndex++;
-                setTimeout(showNextWord, 1000);
-            } else {
-                // Selesai intro, masuk ke amplop
-                setTimeout(() => {
-                    clearInterval(matrixInterval);
-                    document.getElementById('screen-1').style.display = 'none';
-                    document.getElementById('screen-2').style.display = 'flex';
-                }, 1000);
-            }
-        }
-        setTimeout(showNextWord, 500);
-
-        // --- ANIMASI BUKA AMPLOP (SCREEN 2) ---
-        function openEnvelope() {
-            const flap = document.getElementById('flap');
-            const letter = document.getElementById('letter');
-            const seal = document.getElementById('seal');
-
-            if (!flap.classList.contains('open')) {
-                seal.style.opacity = '0'; // hilangkan stiker love
-                flap.classList.add('open'); // buka tutup amplop
-                
-                // Kertas naik ke atas setelah amplop kebuka
-                setTimeout(() => {
-                    letter.classList.add('open');
-                }, 500); 
-            }
-        }
-
-        // --- PINDAH KE FOTO LOVE (SCREEN 3) ---
-        function goToScreen3(event) {
-            event.stopPropagation();
-            document.getElementById('screen-2').style.display = 'none';
-            document.getElementById('screen-3').style.display = 'flex';
-            createHeartCollage();
-        }
-
-        function createHeartCollage() {
-            const container = document.getElementById('heart-container');
+        function openGift() {
+            const intro = document.getElementById('intro-screen');
+            const main = document.getElementById('main-content');
             
-            // Masukkan 20 nama foto kamu di sini (sesuaikan dengan nama file asli di folder)
-            const fotoPacar = [
-                "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg",
-                "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg",
-                "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg",
-                "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg"
-            ];
-
-            fotoPacar.forEach((src, index) => {
-                const img = document.createElement('img');
-                img.src = src;
-                img.className = 'heart-img';
-                
-                // Fallback kalau foto belum ada
-                img.onerror = () => { img.src = `https://via.placeholder.com/60/ffb6c1/ffffff?text=${index+1}` };
-
-                // Rumus matematika untuk posisi Love
-                const t = (index / 20) * Math.PI * 2;
-                const x = 16 * Math.pow(Math.sin(t), 3);
-                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-
-                // Mapping posisi ke dalam kontainer
-                const left = 50 + (x * 2.8); 
-                const top = 50 + (y * 2.8); 
-
-                img.style.left = `calc(${left}% - 27px)`; 
-                img.style.top = `calc(${top}% - 32px)`;
-                
-                // Efek miring-miring kayak polaroid
-                const randomRot = (Math.random() - 0.5) * 30;
-
-                container.appendChild(img);
-
-                // Foto muncul satu per satu
-                setTimeout(() => {
-                    img.classList.add('show');
-                    img.style.transform = `scale(1) rotate(${randomRot}deg)`;
-                }, 150 * index); 
-            });
-
-            // Munculkan teks penutup
+            // Efek fade out untuk kado
+            intro.style.opacity = '0';
+            
             setTimeout(() => {
-                document.getElementById('closingText').style.opacity = '1';
-            }, 150 * 20 + 500);
+                intro.style.display = 'none';
+                main.style.display = 'block';
+                
+                // Jika nanti kamu menambahkan audio, aktifkan baris di bawah ini:
+                // document.querySelector('audio').play();
+            }, 1000); // Menunggu 1 detik sesuai transisi CSS
         }
     </script>
 </body>
