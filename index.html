@@ -2,822 +2,299 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You, My Everything</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Digital Universe — Karan & Ayaa</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-1: #18000f;
-            --bg-2: #220013;
-            --bg-3: #2d0019;
-            --bg-4: #3a0022;
-            --accent-1: #ff7eb6;
-            --accent-2: #ff9ac7;
-            --accent-3: #ffb4d6;
-            --text-main: #ffffff;
-            --text-muted: #f8dce7;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3), var(--bg-4));
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: var(--text-main);
-            font-family: 'Cormorant Garamond', serif;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .content-wrapper {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Typography */
-        h1, h2, h3 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 400;
-        }
-
-        .highlight-pink {
-            font-family: 'Great Vibes', cursive;
-            color: var(--accent-2);
-            font-weight: 400;
-            text-transform: lowercase;
-            text-shadow: 0 0 10px rgba(255, 126, 182, 0.4);
-        }
-
-        .small-title {
-            font-size: 14px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        /* Glassmorphism Utility */
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Animations */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 1.2s cubic-bezier(0.5, 0, 0, 1);
-        }
-        
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .pulse-glow {
-            animation: pulseGlow 2s infinite;
-        }
-
-        @keyframes pulseGlow {
-            0% { text-shadow: 0 0 10px rgba(255, 154, 199, 0.5); transform: scale(1); }
-            50% { text-shadow: 0 0 20px rgba(255, 154, 199, 0.8), 0 0 30px rgba(255, 154, 199, 0.6); transform: scale(1.1); }
-            100% { text-shadow: 0 0 10px rgba(255, 154, 199, 0.5); transform: scale(1); }
-        }
-
-        /* Sections General */
-        section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 80px 20px;
-            text-align: center;
-        }
-
-        /* Music Player */
-        .music-player {
-            position: fixed;
-            bottom: 25px;
-            left: 25px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            gap: 12px;
-            width: 260px;
-            transition: transform 0.3s ease;
-        }
-
-        .music-player:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 126, 182, 0.3);
-        }
-
-        .album-cover {
-            width: 45px;
-            height: 45px;
-            border-radius: 8px;
-            object-fit: cover;
-            animation: spin 8s linear infinite;
-            animation-play-state: paused;
-        }
-
-        .album-cover.playing {
-            animation-play-state: running;
-            border-radius: 50%;
-        }
-
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
-        .song-info {
-            flex: 1;
-            text-align: left;
-        }
-
-        .song-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
-            font-family: sans-serif;
-            margin-bottom: 2px;
-        }
-
-        .song-artist {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-family: sans-serif;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            margin-top: 6px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress {
-            width: 0%;
-            height: 100%;
-            background: var(--accent-2);
-            box-shadow: 0 0 5px var(--accent-1);
-        }
-
-        .play-btn {
-            background: none;
-            border: none;
-            color: var(--text-main);
-            font-size: 20px;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .play-btn:hover {
-            color: var(--accent-2);
-        }
-
-        /* Section 1: Hero */
-        .hero-emoji {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .hero h1 {
-            font-size: 42px;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .hero h1 .highlight-pink {
-            font-size: 56px;
-            display: block;
-            margin-top: -5px;
-        }
-
-        .hero p {
-            font-size: 18px;
-            color: var(--text-muted);
-            max-width: 400px;
-            margin: 0 auto 40px;
-            line-height: 1.6;
-        }
-
-        .btn-sakura {
-            background: rgba(255, 126, 182, 0.15);
-            border: 1px solid rgba(255, 126, 182, 0.4);
-            color: var(--accent-3);
-            padding: 12px 28px;
-            border-radius: 30px;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-style: italic;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-sakura:hover {
-            background: rgba(255, 126, 182, 0.3);
-            box-shadow: 0 0 20px rgba(255, 126, 182, 0.4);
-            transform: translateY(-3px);
-        }
-
-        /* Section 2: Why I Love You */
-        .reasons h2 {
-            font-size: 36px;
-            margin-bottom: 40px;
-        }
-
-        .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .card {
-            padding: 25px;
-            text-align: left;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .card:hover {
-            border-color: rgba(255, 126, 182, 0.4);
-            box-shadow: 0 0 20px rgba(255, 126, 182, 0.15);
-            transform: translateX(10px);
-        }
-
-        .card-icon {
-            font-size: 28px;
-        }
-
-        .card-text {
-            font-size: 22px;
-            font-family: 'Playfair Display', serif;
-            color: var(--text-main);
-        }
-
-        /* Section 3: Gallery */
-        .gallery-section h2 {
-            font-size: 36px;
-            margin-bottom: 40px;
-        }
-
-        .gallery-section h2 .highlight-pink {
-            font-size: 48px;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .gallery-item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .img-wrapper {
-            width: 100%;
-            aspect-ratio: 3/4;
-            overflow: hidden;
-            border-radius: 12px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%);
-            transition: all 0.5s ease;
-        }
-
-        .img-wrapper:hover img {
-            filter: grayscale(0%);
-            transform: scale(1.08);
-        }
-
-        .img-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .img-wrapper:hover::after {
-            opacity: 1;
-        }
-
-        .foto-label {
-            font-size: 14px;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-
-        /* Modal */
-        .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal img {
-            max-width: 90%;
-            max-height: 85vh;
-            border-radius: 16px;
-            box-shadow: 0 0 30px rgba(255, 126, 182, 0.2);
-            transform: scale(0.9);
-            transition: transform 0.4s cubic-bezier(0.5, 0, 0, 1);
-        }
-
-        .modal.active img {
-            transform: scale(1);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            cursor: pointer;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* Section 4: Always & Forever */
-        .message-section h2 {
-            font-size: 32px;
-            margin-bottom: 30px;
-            line-height: 1.3;
-        }
-        
-        .message-section h2 .highlight-pink {
-            font-size: 44px;
-            display: block;
-        }
-
-        .love-paragraph {
-            max-width: 500px;
-            font-size: 20px;
-            line-height: 1.8;
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 40px;
-        }
-
-        .heart-icon {
-            font-size: 40px;
-            margin-bottom: 30px;
-        }
-
-        .closing-text {
-            font-size: 22px;
-            font-style: italic;
-            color: var(--accent-2);
-        }
-
-        /* Section 5: Final Letter */
-        .final-letter {
-            padding: 50px 30px;
-            max-width: 600px;
-            width: 90%;
-            margin: 0 auto;
-            text-align: left;
-        }
-
-        .final-letter h2 {
-            font-size: 28px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .final-letter h2 .highlight-pink {
-            font-size: 40px;
-        }
-
-        .letter-content {
-            font-size: 18px;
-            line-height: 1.8;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-        }
-
-        .letter-content p {
-            margin-bottom: 15px;
-        }
-
-        .signature {
-            text-align: right;
-            font-size: 24px;
-            color: var(--accent-2);
-            font-family: 'Great Vibes', cursive;
-        }
-
-        /* Responsive larger screens */
-        @media (min-width: 768px) {
-            .hero h1 { font-size: 64px; }
-            .hero h1 .highlight-pink { font-size: 82px; }
-            .cards-container { flex-direction: row; justify-content: center; max-width: 800px; }
-            .card { flex: 1; flex-direction: column; text-align: center; justify-content: center; padding: 40px 20px; }
-            .gallery-grid { grid-template-columns: repeat(4, 1fr); max-width: 900px; }
-            .message-section h2 { font-size: 48px; }
-            .message-section h2 .highlight-pink { font-size: 64px; }
-            .final-letter { padding: 60px 50px; }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <link rel="preload" as="image" href="assets/images/foto1.jpg">
+    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
-
-    <div class="music-player glass">
-        <img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?q=80&w=200&auto=format&fit=crop" alt="Album Cover" class="album-cover" id="album-cover">
-        <div class="song-info">
-            <div class="song-title">Dandelions</div>
-            <div class="song-artist">Ruth B.</div>
-            <div class="progress-bar">
-                <div class="progress" id="progress"></div>
+    <div id="telegram-intro">
+        <div class="notification-pill" id="notif-pill">
+            <div class="notif-icon"><i class="ph-fill ph-telegram-logo"></i></div>
+            <div class="notif-content">
+                <span class="notif-title">Telegram</span>
+                <span class="notif-text" id="notif-text">Pesan Baru</span>
             </div>
         </div>
-        <button class="play-btn" id="play-btn">▶</button>
-        <audio id="bg-music" loop>
-            <source src="#" type="audio/mpeg">
+    </div>
+
+    <div id="cursor-trail"></div>
+
+    <div id="universe-bg">
+        <div class="aurora glow-purple parallax-layer" data-speed="0.02"></div>
+        <div class="aurora glow-rosegold parallax-layer" data-speed="-0.03"></div>
+        <div class="aurora glow-midnight parallax-layer" data-speed="0.01"></div>
+        <div class="star-field parallax-layer" data-speed="0.05"></div>
+        <div id="shooting-stars-container"></div>
+        <div id="light-dust-container" class="parallax-layer" data-speed="0.08"></div>
+    </div>
+
+    <div id="opening-screen" class="hidden">
+        <canvas id="opening-canvas"></canvas>
+        <div class="cinematic-text-container">
+            <h2 class="cinematic-text" id="cine-date">11 September 2025</h2>
+            <h2 class="cinematic-text" id="cine-story">Awal dari cerita terindahku</h2>
+        </div>
+        
+        <div class="opening-main-content hidden" id="opening-main">
+            <h1 class="opening-title shimmer-text">9 Months With You <i class="ph-fill ph-heart" style="color: var(--rose-gold);"></i></h1>
+            <p class="opening-subtitle">Setiap hari bersamamu adalah hadiah terindah.</p>
+            <button class="btn-premium" id="btn-start">Mulai Perjalanan Kita</button>
+        </div>
+    </div>
+
+    <div id="main-content" class="hidden">
+
+        <header id="hero" class="section-padding">
+            <div class="hero-container glass-ultra reveal-blur parallax-card">
+                <div class="tg-hero-icon"><i class="ph-fill ph-telegram-logo"></i></div>
+                <h1 class="hero-title">Semuanya berawal dari sini.</h1>
+                <p class="hero-desc letter-reveal">Sebuah pesan.<br>Sebuah percakapan.<br>Dan seseorang yang kini sangat berarti.</p>
+            </div>
+        </header>
+
+        <section id="counter" class="section-padding">
+            <p class="section-tag text-center reveal-up">Waktu Berharga Kita</p>
+            <h2 class="section-title text-center reveal-up">Sejak hari pertama aku memilihmu.</h2>
+            <div class="counter-grid reveal-scale">
+                <div class="counter-box glass-ultra parallax-card">
+                    <span class="counter-number" id="count-days">00</span>
+                    <span class="counter-label">Hari</span>
+                </div>
+                <div class="counter-box glass-ultra parallax-card">
+                    <span class="counter-number" id="count-hours">00</span>
+                    <span class="counter-label">Jam</span>
+                </div>
+                <div class="counter-box glass-ultra parallax-card">
+                    <span class="counter-number" id="count-minutes">00</span>
+                    <span class="counter-label">Menit</span>
+                </div>
+                <div class="counter-box glass-ultra parallax-card">
+                    <span class="counter-number" id="count-seconds">00</span>
+                    <span class="counter-label">Detik</span>
+                </div>
+            </div>
+            <h3 class="counter-footer text-center reveal-up">Dan aku masih memilihmu setiap hari <i class="ph-fill ph-heart" style="color: var(--rose-gold);"></i></h3>
+        </section>
+
+        <section id="timeline" class="section-padding">
+            <p class="section-tag text-center reveal-up">Jejak Digital Kita</p>
+            <h2 class="section-title text-center reveal-up">Perjalanan Rasa</h2>
+            <div class="timeline-container">
+                <div class="timeline-glow-line"></div>
+                
+                <div class="timeline-item reveal-blur">
+                    <div class="timeline-badge"><i class="ph-fill ph-chat-circle-text"></i></div>
+                    <div class="timeline-card glass-ultra parallax-card">
+                        <div class="timeline-date">BAB 1 : Telegram Message</div>
+                        <h3 class="timeline-title">Semuanya berawal dari sini.</h3>
+                        <p class="timeline-body">Satu notifikasi kecil di layar yang perlahan mengubah seluruh dunia dan cara pandangku tentang bahagia.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal-blur">
+                    <div class="timeline-badge"><i class="ph-fill ph-keyboard"></i></div>
+                    <div class="timeline-card glass-ultra parallax-card">
+                        <div class="timeline-date">BAB 2 : Percakapan Pertama</div>
+                        <h3 class="timeline-title">Mulai mengenal seseorang yang luar biasa.</h3>
+                        <p class="timeline-body">Malam-malam yang dihabiskan untuk bertukar cerita, tertawa lewat ketikan, dan menemukan kenyamanan yang tak pernah kuduga.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal-blur">
+                    <div class="timeline-badge"><i class="ph-fill ph-phone-call"></i></div>
+                    <div class="timeline-card glass-ultra parallax-card">
+                        <div class="timeline-date">BAB 3 : Voice Call Pertama</div>
+                        <h3 class="timeline-title">Suara yang akhirnya menjadi favoritku.</h3>
+                        <p class="timeline-body">Mendengar tawamu secara langsung menembus jarak. Detik itu juga, aku tahu suaramu adalah lagu yang ingin selalu kudengar.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal-blur">
+                    <div class="timeline-badge"><i class="ph-fill ph-video-camera"></i></div>
+                    <div class="timeline-card glass-ultra parallax-card">
+                        <div class="timeline-date">BAB 4 : Video Call Pertama</div>
+                        <h3 class="timeline-title">Melihat seseorang yang sangat berarti.</h3>
+                        <p class="timeline-body">Menatap matamu lewat layar kaca. Jarak fisik terasa begitu jauh, tapi hati kita terasa begitu dekat.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal-blur">
+                    <div class="timeline-badge"><i class="ph-fill ph-calendar-heart"></i></div>
+                    <div class="timeline-card glass-ultra parallax-card">
+                        <div class="timeline-date">BAB 5 : 11 September 2025</div>
+                        <h3 class="timeline-title">Hari dimana aku memilikimu.</h3>
+                        <p class="timeline-body">Hari magis saat kita memutuskan untuk mengikat rasa. Berjanji untuk saling menjaga meski dimensi kita dibatasi oleh layar.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal-blur">
+                    <div class="timeline-badge"><i class="ph-fill ph-game-controller"></i></div>
+                    <div class="timeline-card glass-ultra parallax-card">
+                        <div class="timeline-date">BAB 6 : Hari-Hari Bersama</div>
+                        <h3 class="timeline-title">Tertawa, bercerita, dan saling menemani.</h3>
+                        <p class="timeline-body">Menghabiskan waktu berjam-jam di telepon, serunya *nobar* film dari jarak jauh, dan bermain *game* bersama. Kita menciptakan dunia kita sendiri di dalam layar.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal-blur">
+                    <div class="timeline-badge"><i class="ph-fill ph-infinity"></i></div>
+                    <div class="timeline-card glass-ultra parallax-card">
+                        <div class="timeline-date">BAB 7 : Hari Ini</div>
+                        <h3 class="timeline-title">9 bulan kemudian, aku masih bersyukur.</h3>
+                        <p class="timeline-body">Rasa ini tidak pernah pudar, malah semakin dalam. Kamu adalah bukti bahwa cinta sejati tidak selalu membutuhkan pertemuan fisik untuk bisa dirasakan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="archive" class="section-padding">
+            <p class="section-tag text-center reveal-up">Rekam Jejak Virtual</p>
+            <h2 class="section-title text-center reveal-up">Digital Memory Archive</h2>
+            <div class="archive-grid">
+                <div class="archive-item glass-ultra reveal-blur parallax-card" onclick="openArchive(this)">
+                    <div class="archive-visual" style="background-image: url('senyumfav.jpg'); background-size: cover; background-position: center;"></div>
+                    <div class="archive-caption">❤️ Senyum Favoritku</div>
+                </div>
+                <div class="archive-item glass-ultra reveal-blur parallax-card" onclick="openArchive(this)">
+                    <div class="archive-visual" style="background-image: url('cantikmu\ hari\ ini.jpg'); background-size: cover; background-position: center;"></div>
+                    <div class="archive-caption">🌸 Cantikmu Hari Ini</div>
+                </div>
+                <div class="archive-item glass-ultra reveal-blur parallax-card" onclick="openArchive(this)">
+                    <div class="archive-visual" style="background-image: url('momen\ yang\ selalu\ aku\ simpan.jpg'); background-size: cover; background-position: center;"></div>
+                    <div class="archive-caption">🥺 Momen Yang Selalu Aku Simpan</div>
+                </div>
+                <div class="archive-item glass-ultra reveal-blur parallax-card" onclick="openArchive(this)">
+                    <div class="archive-visual" style="background-image: url('tatapan\ fav.jpg'); background-size: cover; background-position: center;"></div>
+                    <div class="archive-caption">✨ Tatapan Favoritku</div>
+                </div>
+                <div class="archive-item glass-ultra reveal-blur parallax-card" onclick="openArchive(this)">
+                    <div class="archive-visual" style="background-image: url('perempuan\ kesayanganku.jpg'); background-size: cover; background-position: center;"></div>
+                    <div class="archive-caption">🌙 Perempuan Kesayanganku</div>
+                </div>
+                <div class="archive-item glass-ultra reveal-blur parallax-card" onclick="openArchive(this)">
+                    <div class="archive-visual" style="background-image: url('bidadariku.jpg'); background-size: cover; background-position: center;"></div>
+                    <div class="archive-caption">💌 Bidadariku</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="letter" class="section-padding">
+            <p class="section-tag text-center reveal-up">Pesan Untukmu</p>
+            <h2 class="section-title text-center reveal-up">Surat Cinta Digital</h2>
+            <div class="letter-paper glass-ultra parallax-card" id="letter-paper">
+                <div class="paper-glow"></div>
+                <div class="letter-content">
+                    <p class="letter-paragraph scroll-typewriter">Hai Sayang...</p>
+                    <p class="letter-paragraph scroll-typewriter">Terima kasih karena sudah hadir ke dalam duniaku yang biasa ini.</p>
+                    <p class="letter-paragraph scroll-typewriter">Terima kasih karena sudah bertahan menghadapi jarak, rindu, dan ego kita.</p>
+                    <p class="letter-paragraph scroll-typewriter">Terima kasih karena telah menjadi 'rumah', tempat yang paling nyaman untukku kembali meski kita belum bisa bersentuhan.</p>
+                    <p class="letter-paragraph scroll-typewriter">Terima kasih karena selalu ada. Tolong temani aku lebih lama lagi, ya?</p>
+                    <p class="letter-paragraph signature">Milikmu,<br>Karan</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="reasons" class="section-padding">
+            <p class="section-tag text-center">Mengapa Kamu?</p>
+            <h2 class="section-title text-center">30 Alasan Aku Mencintaimu</h2>
+            <div class="reasons-grid" id="reasons-container">
+                </div>
+        </section>
+
+        <section id="someday" class="section-padding">
+            <div class="someday-container text-center">
+                <h2 class="someday-title shimmer-text reveal-up">Someday</h2>
+                <div class="someday-text-wrapper">
+                    <p class="someday-line reveal-blur">"Suatu hari nanti..."</p>
+                    <p class="someday-line reveal-blur">"Aku ingin melihat senyummu secara langsung."</p>
+                    <p class="someday-line reveal-blur">"Bukan melalui layar."</p>
+                    <p class="someday-line reveal-blur">"Bukan melalui foto."</p>
+                    <p class="someday-line reveal-blur">"Bukan melalui panggilan."</p>
+                    <p class="someday-line reveal-blur highlight">"Tapi tepat di hadapanku."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="constellation" class="section-padding">
+            <p class="section-tag text-center reveal-up">Takdir yang Tertulis</p>
+            <h2 class="section-title text-center reveal-up">Bintang Kita</h2>
+            <div class="constellation-container glass-ultra reveal-blur parallax-card">
+                <canvas id="constellation-canvas"></canvas>
+            </div>
+        </section>
+
+        <section id="secret" class="section-padding">
+            <p class="section-tag text-center reveal-up">Sebuah Kejutan</p>
+            <div class="text-center reveal-scale">
+                <button class="btn-secret" id="btn-secret-trigger">Satu Hal Lagi...</button>
+            </div>
+        </section>
+
+        <footer id="final" class="section-padding">
+            <div class="final-content parallax-card">
+                <h2 class="final-title reveal-up shimmer-text">Happy 9 Months <i class="ph-fill ph-heart" style="color:var(--rose-gold);"></i></h2>
+                <p class="final-subtitle reveal-up">Terima kasih sudah menjadi bagian terindah dalam hidupku.</p>
+                <div class="infinity-container reveal-scale">
+                    <svg class="infinity-svg" viewBox="0 0 100 50">
+                        <path d="M20,25 C20,10 45,10 50,25 C55,40 80,40 80,25 C80,10 55,10 50,25 C45,40 20,40 20,25 Z" />
+                    </svg>
+                </div>
+                <div class="final-heart reveal-scale heart-pulse"><i class="ph-fill ph-heart"></i></div>
+            </div>
+        </footer>
+
+    </div>
+
+    <div id="music-player" class="glass-ultra hidden">
+        <button class="player-btn" id="btn-play-pause"><i class="ph-fill ph-play"></i></button>
+        <div class="player-details">
+            <span class="player-info" id="track-status">Our Song 🎵</span>
+            <input type="range" id="progress-bar" value="0" min="0" max="100" step="0.1">
+            
+            <div class="audio-controls">
+                <div class="vol-control">
+                    <span style="font-size: 14px;"><i class="ph-fill ph-speaker-high"></i></span>
+                    <input type="range" id="volume-bar" value="40" min="0" max="100">
+                </div>
+            </div>
+        </div>
+        <audio id="romantic-audio" loop preload="auto">
+            <source src="HER_-_Best_Part_CeeNaija.com_.mp3" type="audio/mpeg">
+            Browser Anda tidak mendukung elemen audio.
         </audio>
     </div>
 
-    <div class="content-wrapper">
-        <section class="hero reveal">
-            <div class="hero-emoji floating">🌸</div>
-            <span class="small-title">a love letter in bloom</span>
-            <h1>For You, <br><span class="highlight-pink">My Everything</span></h1>
-            <p>Every moment with you is a beautiful chapter in my life. This is a little space dedicated to us.</p>
-            <a href="#reasons" class="btn-sakura">Open Letter ✨</a>
-        </section>
-
-        <section id="reasons" class="reasons reveal">
-            <span class="small-title">what makes you special</span>
-            <h2>Why I Love You</h2>
-            <div class="cards-container">
-                <div class="card glass">
-                    <div class="card-icon">🫶</div>
-                    <div class="card-text">Your Soul</div>
-                </div>
-                <div class="card glass">
-                    <div class="card-icon">🌸</div>
-                    <div class="card-text">Your Kindness</div>
-                </div>
-                <div class="card glass">
-                    <div class="card-icon">💖</div>
-                    <div class="card-text">Your Smile</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="gallery-section reveal">
-            <span class="small-title">captured in time</span>
-            <h2>Your Beautiful <span class="highlight-pink">Pictures</span></h2>
-            <div class="gallery-grid">
-                <div class="gallery-item reveal">
-                    <div class="img-wrapper" onclick="openModal('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=600&auto=format&fit=crop')">
-                        <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=400&auto=format&fit=crop" alt="Foto 1">
-                    </div>
-                    <span class="foto-label">foto 1</span>
-                </div>
-                <div class="gallery-item reveal" style="transition-delay: 0.1s;">
-                    <div class="img-wrapper" onclick="openModal('https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=600&auto=format&fit=crop')">
-                        <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=400&auto=format&fit=crop" alt="Foto 2">
-                    </div>
-                    <span class="foto-label">foto 2</span>
-                </div>
-                <div class="gallery-item reveal" style="transition-delay: 0.2s;">
-                    <div class="img-wrapper" onclick="openModal('https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop')">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop" alt="Foto 3">
-                    </div>
-                    <span class="foto-label">foto 3</span>
-                </div>
-                <div class="gallery-item reveal" style="transition-delay: 0.3s;">
-                    <div class="img-wrapper" onclick="openModal('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop')">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop" alt="Foto 4">
-                    </div>
-                    <span class="foto-label">foto 4</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="message-section reveal">
-            <span class="small-title floating">🌸 always & forever</span>
-            <h2>You Are Loved <span class="highlight-pink">Beyond Words</span></h2>
-            <p class="love-paragraph">
-                In a world full of temporary things, you are a perpetual feeling. I just wanted to remind you how deeply and endlessly you are loved, today and every day after.
-            </p>
-            <div class="heart-icon pulse-glow">💗</div>
-            <p class="closing-text">little soul, you are my gem</p>
-        </section>
-
-        <section class="reveal">
-            <div class="final-letter glass">
-                <h2>You are my <span class="highlight-pink">wildest dream</span> come true.</h2>
-                <div class="letter-content">
-                    <p>My love,</p>
-                    <p>I built this little digital space just to show a fraction of what I feel for you. You bring so much light into my life, making the heavy days lighter and the good days absolutely magical.</p>
-                    <p>Thank you for your patience, your warmth, and the beautiful way you see the world. I promise to keep choosing you, in a hundred lifetimes, in a hundred worlds, in any version of reality.</p>
-                    <p>I love you, more than words can say.</p>
-                </div>
-                <div class="signature">always yours ♡</div>
-            </div>
-        </section>
+    <div class="lightbox" id="archive-lightbox">
+        <div class="lightbox-content glass-ultra">
+            <div class="lightbox-visual" id="lightbox-visual"></div>
+            <div class="polaroid-caption" id="lightbox-caption">Kenangan Digital</div>
+            <button class="close-lightbox" id="close-lightbox"><i class="ph ph-x"></i></button>
+        </div>
     </div>
 
-    <div class="modal" id="imageModal">
-        <span class="close-modal" onclick="closeModal()">×</span>
-        <img src="" alt="Fullscreen Image" id="modalImg">
+    <div class="secret-overlay" id="secret-overlay">
+        <div class="secret-content">
+            <div class="secret-text-container">
+                <h2 class="secret-text" id="sec-txt-1">Kalau aku tidak mengirim pesan itu...</h2>
+                <h2 class="secret-text" id="sec-txt-2">Mungkin aku tidak akan mengenalmu.</h2>
+                <h2 class="secret-text" id="sec-txt-3">Mungkin aku tidak akan memiliki semua kenangan ini.</h2>
+                <h2 class="secret-text" id="sec-txt-4">Untungnya...</h2>
+                <h2 class="secret-text shimmer-text" id="sec-txt-5">Aku mengirim pesan itu. <i class="ph-fill ph-heart"></i></h2>
+            </div>
+            <button class="btn-premium hidden" id="btn-close-secret" style="margin-top: 60px; position:relative; z-index:100;">Kembali</button>
+        </div>
     </div>
 
-    <script>
-        // 1. SCROLL REVEAL ANIMATION
-        const revealElements = document.querySelectorAll('.reveal');
-        
-        const revealOptions = {
-            threshold: 0.15,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
-        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add('active');
-                observer.unobserve(entry.target);
-            });
-        }, revealOptions);
-
-        revealElements.forEach(el => revealOnScroll.observe(el));
-        
-        // Trigger for elements already in view on load
-        setTimeout(() => {
-            revealElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                if(rect.top < window.innerHeight) {
-                    el.classList.add('active');
-                }
-            });
-        }, 100);
-
-        // 2. MUSIC PLAYER LOGIC
-        const bgMusic = document.getElementById('bg-music');
-        const playBtn = document.getElementById('play-btn');
-        const albumCover = document.getElementById('album-cover');
-        const progressBar = document.getElementById('progress');
-        let isPlaying = false;
-
-        playBtn.addEventListener('click', () => {
-            if(isPlaying) {
-                bgMusic.pause();
-                playBtn.innerHTML = '▶';
-                albumCover.classList.remove('playing');
-            } else {
-                bgMusic.play().catch(e => console.log("Audio play failed:", e));
-                playBtn.innerHTML = '⏸';
-                albumCover.classList.add('playing');
-            }
-            isPlaying = !isPlaying;
-        });
-
-        // Fake progress bar animation (karena tidak ada source audio nyata secara default)
-        let progressVal = 0;
-        setInterval(() => {
-            if(isPlaying) {
-                progressVal += 0.5;
-                if(progressVal > 100) progressVal = 0;
-                progressBar.style.width = progressVal + '%';
-            }
-        }, 1000);
-
-        // 3. MODAL GALLERY LOGIC
-        const modal = document.getElementById('imageModal');
-        const modalImg = document.getElementById('modalImg');
-
-        function openModal(src) {
-            modalImg.src = src;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            setTimeout(() => { modalImg.src = ''; }, 400);
-        }
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-
-        // 4. SMOOTH SCROLL FOR LINKS
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // 5. CANVAS BACKGROUND (SAKURA & PARTICLES)
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-
-        let width, height;
-        let petals = [];
-        let particles = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Sakura Petal Object
-        class Petal {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height - height;
-                this.w = 10 + Math.random() * 15;
-                this.h = 6 + Math.random() * 10;
-                this.opacity = 0.3 + Math.random() * 0.5;
-                this.speedY = 1 + Math.random() * 2;
-                this.speedX = -1 + Math.random() * 2;
-                this.angle = Math.random() * 360;
-                this.spin = -0.05 + Math.random() * 0.1;
-                this.color = Math.random() > 0.5 ? '#ffb4d6' : '#ff9ac7';
-            }
-
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                this.angle += this.spin;
-
-                if (this.y > height) {
-                    this.y = -this.h;
-                    this.x = Math.random() * width;
-                }
-                if (this.x > width + this.w) this.x = -this.w;
-                if (this.x < -this.w) this.x = width + this.w;
-            }
-
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
-                ctx.globalAlpha = this.opacity;
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color;
-
-                // Draw petal shape
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.w / 2, this.h / 2, 0, 0, 2 * Math.PI);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        // Glowing Particle Object
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = height + Math.random() * height;
-                this.size = 1 + Math.random() * 3;
-                this.opacity = 0.1 + Math.random() * 0.4;
-                this.speedY = -(0.5 + Math.random() * 1.5);
-                this.speedX = -0.5 + Math.random() * 1;
-            }
-
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-
-                if (this.y < -10) {
-                    this.y = height + 10;
-                    this.x = Math.random() * width;
-                }
-            }
-
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.opacity;
-                ctx.fillStyle = '#ff7eb6';
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = '#ff7eb6';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        // Initialize entities
-        for (let i = 0; i < 35; i++) {
-            petals.push(new Petal());
-        }
-        for (let i = 0; i < 40; i++) {
-            particles.push(new Particle());
-        }
-
-        // Animation Loop
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            
-            // Draw Bokeh glow
-            ctx.globalCompositeOperation = 'lighter';
-            
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            ctx.globalCompositeOperation = 'source-over';
-
-            petals.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
